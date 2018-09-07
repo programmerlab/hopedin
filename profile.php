@@ -397,10 +397,7 @@ if(!isset($_SESSION['mobileNumber']))
 	
   </div>
   
-     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	<script defer src="https://use.fontawesome.com/releases/v5.0.12/js/all.js" integrity="sha384-Voup2lBiiyZYkRto2XWqbzxHXwzcm4A5RfdfG6466bu5LqjwwrjXCMBQBLMWh7qR" crossorigin="anonymous"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
+    
 	<script>
 	function verify_otp()
 	{

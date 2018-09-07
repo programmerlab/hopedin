@@ -66,8 +66,7 @@ $image=$row['profile'];
 						
 						<li><a href="#"><span><i  class="fa fa-bell"></i></span><span>Transaction</span></a></li>
 						<li><a href="#"><span><i class="fa fa-life-ring"></i></span><span>Support</span></a></li>
-						<li><a href="#"><span><i class="fa fa-star"></i></span><span>Rate Us</span></a></li>
-						<li><a href="#"><span><i class="fa fa-share"></i></span><span>Share</span></a></li>
+						
 						
 						<li><a href="logout.php"><span><i  class="fa fa-power-off" style="color:red"></i></span><span>Sign Out</span></a></li>
 					</ul>

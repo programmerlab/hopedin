@@ -118,19 +118,14 @@ else if(isset($_REQUEST['id']))
 									<h4 class="panel-title">
 									  <?php 
 									  $checked="";
-									  $req_data=$db->Check_friends_request($row['id']);
+									  $req_data=$db->check_blocked($row['id']);
 									  if(mysqli_num_rows($req_data))
 									  {
-										$req_row=mysqli_fetch_assoc($req_data);
-										if($req_row['status']==2)
-										{
-											$checked="checked";
-										}
+										 $checked="checked";
 									  }
-									  
 									  ?>
 									  <a>Block User <span><label class="switch">
-										<input type="checkbox" onchange="return Block_unblock();" <?php echo $checked; ?> >
+										<input type="checkbox" <?php echo $checked; ?> id="block_sets" onchange="return block_unblock(<?php echo $row['id']; ?>);" >
 										<span class="slider"></span>
 										</label></span></a>
 									</h4>
@@ -232,11 +227,7 @@ else if(isset($_REQUEST['id']))
 	</div>
   </div>
   
-     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
+    
 	
 
   </body>

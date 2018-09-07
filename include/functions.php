@@ -1,9 +1,9 @@
 <?php
+//date_default_timezone_set('Asia/Kolkata');
 define("DBHOST","localhost");
-define("DBUSER","hopedin_sites");
-define("DBPASS","hopedin@123");
+define("DBUSER","root");
+define("DBPASS","Hope@123!");
 define("DBNAME",'hopedin_site');
-
 class functions
 {
 	function __construct() {
@@ -83,7 +83,8 @@ class functions
 	
 	function Get_my_friend_chat() 
 	{
-		$sel="select registration.id,registration.fname,registration.lname,registration.profile,registration.country,registration.gender,registration.age,chat_msg.chat_id ,chat_msg.cdate from friend_tbl inner join registration on registration.id=CASE WHEN friend_tbl.requested_to='".$_SESSION['session_user_set']."' THEN friend_tbl.requested_by ELSE friend_tbl.requested_to END inner join (select * from chat_msg where '".$_SESSION['session_user_set']."' IN (sender,receiver) order by chat_id DESC ) as chat_msg on registration.id IN (chat_msg.sender,chat_msg.receiver) where (friend_tbl.requested_to='".$_SESSION['session_user_set']."' or friend_tbl.requested_by='".$_SESSION['session_user_set']."') and friend_tbl.status=1 GROUP BY registration.id order by chat_msg.chat_id DESC";
+		
+		$sel="select registration.id,registration.fname,registration.lname,registration.profile,registration.country,registration.gender,registration.age,chat_msg.chat_id ,chat_msg.cdate from (select * from chat_msg where '".$_SESSION['session_user_set']."' IN (sender,receiver) order by chat_id DESC LIMIT 0,1000) as chat_msg inner join registration on registration.id=CASE WHEN chat_msg.sender='".$_SESSION['session_user_set']."' THEN chat_msg.receiver ELSE chat_msg.sender END where '".$_SESSION['session_user_set']."' IN (chat_msg.sender,chat_msg.receiver) GROUP by registration.id order by chat_msg.chat_id DESC";
     	$run=$this->query($sel);
     	return $run;
 	}
@@ -91,7 +92,7 @@ class functions
 	
 	function Get_my_friends() 
 	{
-		$sel="select registration.id,registration.fname,registration.lname,registration.profile,registration.country,registration.gender,registration.age,chat_msg.chat_id ,chat_msg.cdate from friend_tbl inner join registration on registration.id=CASE WHEN friend_tbl.requested_to='".$_SESSION['session_user_set']."' THEN friend_tbl.requested_by ELSE friend_tbl.requested_to END LEFT join (select * from chat_msg where '".$_SESSION['session_user_set']."' IN (sender,receiver) order by chat_id DESC ) as chat_msg on registration.id IN (chat_msg.sender,chat_msg.receiver) where (friend_tbl.requested_to='".$_SESSION['session_user_set']."' or friend_tbl.requested_by='".$_SESSION['session_user_set']."') and friend_tbl.status=1 GROUP BY registration.id order by registration.fname ASC";
+		$sel="select registration.id,registration.fname,registration.lname,registration.profile,registration.country,registration.gender,registration.age from friend_tbl inner join registration on registration.id=CASE WHEN friend_tbl.requested_to='".$_SESSION['session_user_set']."' THEN friend_tbl.requested_by ELSE friend_tbl.requested_to END  where (friend_tbl.requested_to='".$_SESSION['session_user_set']."' or friend_tbl.requested_by='".$_SESSION['session_user_set']."') and friend_tbl.status=1  order by registration.fname ASC ";
 		//$sel="select registration.id,registration.fname,registration.lname,registration.profile from friend_tbl inner join registration on registration.id=CASE WHEN friend_tbl.requested_to='".$_SESSION['session_user_set']."' THEN friend_tbl.requested_by ELSE friend_tbl.requested_to END where (friend_tbl.requested_to='".$_SESSION['session_user_set']."' or friend_tbl.requested_by='".$_SESSION['session_user_set']."') and friend_tbl.status=1";
     	$run=$this->query($sel);
     	return $run;
@@ -242,6 +243,7 @@ class functions
 		);
 		$clientsIpAddress = $_SERVER['REMOTE_ADDR'];
 		$zone=file_get_contents('https://ipapi.co/'.$clientsIpAddress.'/timezone/');
+		echo "df"; print_r($zone);
 		if($zone)
 		{
 			 if($timezones[$zone]) 
@@ -349,6 +351,18 @@ class functions
 	function get_notification()
 	{
 		$sel="select notification.*,registration.id as rid,registration.fname,registration.lname,registration.profile from notification inner join registration on registration.id=notification.user_id where notification.status='0' and notification.other_id='".$_SESSION['session_user_set']."' order by notification.id DESC";
+    	$run=$this->query($sel);
+    	return $run;
+	}
+	function check_blocked($to)
+	{
+		$sel="select * from block_user where block_by='".$_SESSION['session_user_set']."' and block_to='$to'";
+    	$run=$this->query($sel);
+    	return $run;
+	}
+	function check_blocked_other($to)
+	{
+		$sel="select * from block_user where block_by='$to' and block_to='".$_SESSION['session_user_set']."'";
     	$run=$this->query($sel);
     	return $run;
 	}

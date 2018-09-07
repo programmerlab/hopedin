@@ -3,7 +3,7 @@ body
 {
 margin:0;
 padding:0;
-font-family: 'Raleway', sans-serif;
+font-family: 'Open Sans', sans-serif;
 }
 img
 {
@@ -263,6 +263,7 @@ background:#86162d !important;
 .top-menu ul li a {
     color: #fff;
     display: block;
+    font-weight: 300;
 }
 .top-menu ul li a span {
     display: block;
@@ -1312,10 +1313,13 @@ span.badge {
     top: 111px;
 }
 ul.side-menu-list {
-    overflow-y: scroll;
+    overflow-y: auto;
     height: 75%;
     position: fixed;
     width: 24.8%;
+}
+ul.side-menu-list::-webkit-scrollbar { 
+    display: none; 
 }
 .mark_green
 {
@@ -1346,7 +1350,7 @@ ul.side-menu-list {
     font-size: 14px;
     color: #445161;
     float: left;
-    font-weight: 600;
+    font-weight: 400;
     width: 80%;
 }
 .chat-get span {
@@ -1354,7 +1358,7 @@ ul.side-menu-list {
     position: relative;
     font-size: 12px;
     display: block;
-    font-weight: 400;
+    font-weight: 600;
     bottom: -10px;
     right: 30px;
 }

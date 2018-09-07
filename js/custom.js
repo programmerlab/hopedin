@@ -1,6 +1,15 @@
 $(window).load(function(){
-	//setInterval(update_chat,12000); 
-	//setInterval(chat_unread_msg,8000);        	
+	setInterval(update_chat,12000); 
+	setInterval(chat_unread_msg,8000);        	
+});
+$(document).on('keyup','.emoji-wysiwyg-editor',function(event){
+//$('#chat_text').keyup(function(event){ 
+    var keyCode = (event.keyCode ? event.keyCode : event.which); 
+    if (keyCode == 13) {
+		//$('.emoji-wysiwyg-editor').blur();
+			chat_start();
+		
+    }
 });
 $(document).on('keydown','#mobile_code',function(e){
 	var myval=$(this).val();
@@ -200,6 +209,27 @@ function upload_camera()
 		});
 	}
 }	
+
+function showLocation(position){
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+	if(latitude && longitude)
+	{
+	var reciver_id=$('#reciver_id').val();
+		$.ajax({
+		url:"process/process.php?action=upload_location",
+		type:"POST",
+		data:{'id':reciver_id,'latitude':latitude,'longitude':longitude},
+		success:function(data)
+		{
+			update_chat();
+			return false;
+		}
+	});
+	}
+	
+    console.log(latitude+" "+longitude);
+}
 function update_chat()
 {
 	var reciver_id=$('#reciver_id').val();
@@ -236,6 +266,10 @@ function update_chat()
 						else if(types1=='record')
 						{
 							min_file=' <audio controls><source src="'+value.file+'" type="audio/mpeg"> Your browser does not support the audio tag.</audio>  ';
+						}
+						else if(types1=='location')
+						{
+							min_file='<a target="_blank" href="map.php?points='+value.points+'"> <img src="img/'+value.file+'" height="200"></a>';
 						}
 						else 
 						{
@@ -373,6 +407,16 @@ function chat_start()
 		success:function(data)
 		{
 			var data=$.trim(data);
+			if(data=='2')
+			{
+				alert('Unblock friend to send a Message!');
+				return false;
+			}
+			if(data=='3')
+			{
+				alert('You can not send message, your friend blocked you!');
+				return false;
+			}
 			$('#chat_text').val('');
 			$('.emoji-wysiwyg-editor').html('');
 			if($('#custom_mine').val())
@@ -381,11 +425,36 @@ function chat_start()
 				alert('Message send Successfully!');
 				return false;
 			}
+
 			update_chat();
 			return false;
 		}
 	});
 	return false;
+}
+function block_unblock(to)
+{
+	if($('#block_sets').is(':checked'))
+	{
+		var act="1";
+		var msg='';
+	}
+	else 
+	{
+		var act="0";
+		var msg='un';
+	}
+		
+	$.ajax({
+			url:"process/process.php?action=block_unblock",
+			type:"POST",
+			data:{'act':act,'to':to},
+			success:function(data)
+			{
+				return false;
+			}
+		});
+	
 }
 function Do_signup()
 {

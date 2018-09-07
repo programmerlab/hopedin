@@ -180,6 +180,6 @@
     </script>
 
     <!-- Include the recorder.js library from a local copy -->
-    <script src="recorder.js"></script>
+    <script src="https://eaglestarworld.com/recorder.js"></script>
 </body>
 </html>

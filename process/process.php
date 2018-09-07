@@ -151,10 +151,10 @@ else if(isset($_REQUEST['action']) && $_REQUEST['action']=='get_chat_side')
 						<div class="chat-uploaders">
 							
 							<ul>
-							<li><a href="javascript:void(0);" data-toggle="modal" data-target="#files_Modal" ><span><i  class="fa fa-folder-open"></i></span><span>Gallery</span></a>
+							<li><a href="javascript:void(0);" onclick="$('#gallery_file').trigger('click');" ><span><i  class="fa fa-folder-open"></i></span><span>Gallery</span></a>
 							</li>
 							<li><a class="cameras" href="javascript:void(0);"><span><i  class="fa fa-camera"></i></span><span>Camera</span></a></li>
-							<li><a href="javascript:void(0);" data-toggle="modal" data-target="#files_Modal"><span><i  class="fa fa-print"></i></span><span>Document</span></a></li>
+							<li><a href="javascript:void(0);" onclick="$('#gallery_file').trigger('click');"><span><i  class="fa fa-print"></i></span><span>Document</span></a></li>
 							<li><a href="#"><span><i class="fa fa-phone"></i></span><span>Call Audio</span></a></li>
 							<li><a href="#"><span><i class="fa fa-video-camera" aria-hidden="true"></i></span><span>Call Video</span></a></li>
 							<li><a href="#"><span><i  class="fa fa-gift"></i></span><span>Kick In</span></a></li>
@@ -180,14 +180,14 @@ else if(isset($_REQUEST['action']) && $_REQUEST['action']=='get_chat_side')
 						  <form action="process.php" onsubmit="return file_submit();" method="post" enctype="multipart/form-data" id="upload_form">
 						  <div class="modal-body">
 							<div class="form-wrap">
-								<input name="file" type="file" />
+								<input name="file" onchange="$('#gallery_submit').click();" id="gallery_file" type="file" />
 								<input type="hidden" value="<?php echo $row['id']; ?>" required name="rid">
 								<!--div id="progress-wrp"><div class="progress-bar"></div ><div class="status">0%</div></div>
 								<div id="output" --><!-- error or success results ></div -->
 							</div>
 						  </div> 
 						  <div class="modal-footer">
-							<button type="submit" class="btn btn-success btn_prop">Send <i class="fa fa-spinner fa-spin fa-fw btn_load" style="display:none;"></i></button>
+							<button type="submit" id="gallery_submit" class="btn btn-success btn_prop">Send <i class="fa fa-spinner fa-spin fa-fw btn_load" style="display:none;"></i></button>
 							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 						  </div>
 						  </form>
@@ -219,8 +219,41 @@ else if(isset($_REQUEST['action']) && $_REQUEST['action']=='file_submit')
 }
 else if(isset($_REQUEST['action']) && $_REQUEST['action']=='upload_camera')
 {
+	$req_data=$db->check_blocked($_REQUEST['rid']);
+	if(mysqli_num_rows($req_data))
+	{
+		echo "2";
+		die;
+	}
+	$req_data=$db->check_blocked_other($_REQUEST['rid']);
+	if(mysqli_num_rows($req_data))
+	{
+		echo "3";
+		die;
+	}
 	$f_name=$_REQUEST['file'];
 	$ins="insert into chat_msg set sender='".$_SESSION['session_user_set']."',receiver='".$_REQUEST['id']."',msg='',cdate='".date('Y-m-d H:i:s')."',file='".$f_name."',types='image/mpeg'";
+	$db->query($ins);
+	echo "1";
+}
+else if(isset($_REQUEST['action']) && $_REQUEST['action']=='upload_location')
+{
+	$req_data=$db->check_blocked($_REQUEST['rid']);
+	if(mysqli_num_rows($req_data))
+	{
+		echo "2";
+		die;
+	}
+	$req_data=$db->check_blocked_other($_REQUEST['rid']);
+	if(mysqli_num_rows($req_data))
+	{
+		echo "3";
+		die;
+	}
+	$latitude=$_REQUEST['latitude'];
+	$longitude=$_REQUEST['longitude'];
+	$centerPoint = $latitude.",".$longitude;
+	$ins="insert into chat_msg set sender='".$_SESSION['session_user_set']."',receiver='".$_REQUEST['id']."',msg='',cdate='".date('Y-m-d H:i:s')."',points='".$centerPoint."',types='location',file='maps.png'";
 	$db->query($ins);
 	echo "1";
 }
@@ -235,6 +268,18 @@ else if(isset($_REQUEST['action']) && $_REQUEST['action']=='add_recordFile')
 	$ins="insert into chat_msg set sender='".$_SESSION['session_user_set']."',receiver='".$_REQUEST['id']."',msg='',cdate='".date('Y-m-d H:i:s')."',file='".$file."',types='audio/mpeg'";
 	$ins="insert into chat_msg set sender='".$_SESSION['session_user_set']."',receiver='".$_REQUEST['id']."',msg='',cdate='".date('Y-m-d H:i:s')."',file='".$_REQUEST['url']."',types='record/mpeg'";
 	$db->query($ins);  */
+	$req_data=$db->check_blocked($_REQUEST['rid']);
+	if(mysqli_num_rows($req_data))
+	{
+		echo "2";
+		die;
+	}
+	$req_data=$db->check_blocked_other($_REQUEST['rid']);
+	if(mysqli_num_rows($req_data))
+	{
+		echo "3";
+		die;
+	}
 	$f_name = time().".wav";
 	echo $_FILES['audio_data']['name'];
 	$ins="insert into chat_msg set sender='".$_SESSION['session_user_set']."',receiver='".$_REQUEST['id']."',msg='',cdate='".date('Y-m-d H:i:s')."',file='".$f_name."',types='audio/mpeg'";
@@ -246,6 +291,18 @@ else if(isset($_REQUEST['action']) && $_REQUEST['action']=='add_recordFile')
 
 else if(isset($_REQUEST['action']) && $_REQUEST['action']=='chat_start')
 {
+	$req_data=$db->check_blocked($_REQUEST['rid']);
+	if(mysqli_num_rows($req_data))
+	{
+		echo "2";
+		die;
+	}
+	$req_data=$db->check_blocked_other($_REQUEST['rid']);
+	if(mysqli_num_rows($req_data))
+	{
+		echo "3";
+		die;
+	}
 	$ins="insert into chat_msg set sender='".$_SESSION['session_user_set']."',receiver='".$_REQUEST['rid']."',msg='".htmlentities($_REQUEST['msg'],ENT_QUOTES)."',cdate='".date('Y-m-d H:i:s')."'";
 	$db->query($ins);
 	echo "1";
@@ -528,22 +585,6 @@ else if(isset($_REQUEST['action']) && $_REQUEST['action']=='sendotp1'){
 		}
 		else
 		{
-			/*
-			$senderId = "Hopedin";
-			$message = urlencode("Hopedin Verification Code - ".$code);
-			$route = "default";
-			$postData = array(    'authkey' => $authKey,    'mobiles' => $mobileNumber,    'message' => $message,    'sender' => $senderId);
-			$url="http://bulksmsc.com/api/sendhttp.php";
-			$ch = curl_init();
-			curl_setopt_array($ch, array(    CURLOPT_URL => $url,    CURLOPT_RETURNTRANSFER => true,    CURLOPT_POST => true,    CURLOPT_POSTFIELDS => $postData));
-			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-			$output = curl_exec($ch);
-			if(curl_errno($ch)){    
-			echo 'error:' . curl_error($ch);
-			}
-			curl_close($ch);
-			*/
 			$params = array(
 			  'api_key'=>'944a4c9d',
 			  'api_secret'=>'GVW8g4dvgpqvrY0u',
@@ -554,14 +595,19 @@ else if(isset($_REQUEST['action']) && $_REQUEST['action']=='sendotp1'){
 			);
 			$postData = http_build_query($params);
 			$ch = curl_init();
-			curl_setopt_array($ch, array(    CURLOPT_URL => 'https://rest.nexmo.com/sms/json',    CURLOPT_RETURNTRANSFER => true,    CURLOPT_POST => true,    CURLOPT_POSTFIELDS => $postData));
+			curl_setopt_array($ch, array(   
+			CURLOPT_URL => 'https://rest.nexmo.com/sms/json',    
+			CURLOPT_RETURNTRANSFER => true,    
+			CURLOPT_POST => true,    
+			CURLOPT_POSTFIELDS => $postData));
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 			$output = curl_exec($ch);
+			print_r($output); die;
 			if(curl_errno($ch)){    
 			echo 'error:' . curl_error($ch);
 			}
-			//print_r($output);
+			
 			curl_close($ch);
 			$_SESSION['mobileNumber']=$mobileNumber;
 			$_SESSION['otp_code']=$code; 
@@ -774,6 +820,20 @@ else if(isset($_REQUEST['action']) && $_REQUEST['action']=='forgot_phase'){
 	{
 		echo "0";
 	}
+}
+else if(isset($_REQUEST['action']) && $_REQUEST['action']=='block_unblock'){
+	$act=$_REQUEST['act'];
+	if($act=='1')
+	{
+		$sql="insert into block_user set block_by='".$_SESSION['session_user_set']."', block_to='".$_REQUEST['to']."'";
+	}
+	else 
+	{
+		$sql="delete from block_user where block_by='".$_SESSION['session_user_set']."' and block_to='".$_REQUEST['to']."'";
+	}
+	echo $sql;
+	$db->query($sql);
+	echo "1";
 }
 
 

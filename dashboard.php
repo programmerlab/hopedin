@@ -106,8 +106,8 @@ include 'include/head.php';
             }
         }
     </script>
-	<script type="text/javascript" src="js/webcam.js"></script>
-<link href="lib/css/emoji.css" rel="stylesheet">
+
+<link href="https://eaglestarworld.com/lib/css/emoji.css" rel="stylesheet">
 <style>
 
 .emoji-items a 
@@ -135,23 +135,11 @@ $(document).ready(function(){
 });
 
 </script>
-<script language="JavaScript">
-$(document).on('click','.cameras',function(){
-	
-	Webcam.set({
-			width: 600,
-			height: 460,
-			image_format: 'jpeg',
-			jpeg_quality: 90
-		});
-	var checkss=Webcam.attach( '#my_camera' );
-	if(checkss)
-	{
-		$('#cameraModal').modal('show');
-	}
-});	
-</script>
+
 <script type="text/javascript" src="js/jquery.form.min.js"></script>
+<div class="camera-div" style="position:relative; z-index:99999999999999999999999999;">
+<div id="my_camera"></div>
+</div>
 <div class="dashboard-content">
   	<div class="container-fluid">
 		<div class="row">
@@ -186,8 +174,9 @@ $(document).on('click','.cameras',function(){
 				</ul>
 			</div>
 			<div class="col-sm-9 right-content right_chat">   
-			
-				<?php 
+
+				<?php
+					
 					if(isset($_REQUEST['user']))   
 					{
 						$data=$db->get_user_byId($_REQUEST['user']);
@@ -220,10 +209,10 @@ $(document).on('click','.cameras',function(){
 						<div class="chat-uploaders">
 							
 							<ul>
-							<li><a href="javascript:void(0);" data-toggle="modal" data-target="#files_Modal" ><span><i  class="fa fa-folder-open"></i></span><span>Gallery</span></a>
+							<li><a href="javascript:void(0);" onclick="$('#gallery_file').trigger('click');" ><span><i  class="fa fa-folder-open"></i></span><span>Gallery</span></a>
 							</li>
-							<li><a class="cameras" href="javascript:void(0);"><span><i  class="fa fa-camera"></i></span><span>Camera</span></a></li>
-							<li><a href="javascript:void(0);" data-toggle="modal" data-target="#files_Modal"><span><i  class="fa fa-print"></i></span><span>Document</span></a></li>
+							<li><a href="javascript:void(0);" class="cameras" onClick="setup(); $(this).hide().next().show();"><span><i  class="fa fa-camera"></i></span><span>Camera</span></a> <a href="javascript:void(0);" class="cameras" onClick="take_snapshot()" style="display:none"><span style="color:red;"><i  class="fa fa-camera"></i></span><span>Take Snap</span></a></li>
+							<li><a href="javascript:void(0);" onclick="$('#gallery_file').trigger('click');"><span><i  class="fa fa-print"></i></span><span>Document</span></a></li>
 							<li><a href="#"><span><i class="fa fa-phone"></i></span><span>Call Audio</span></a></li>
 							<li><a href="#"><span><i class="fa fa-video-camera" aria-hidden="true"></i></span><span>Call Video</span></a></li>
 							<li><a href="#"><span><i  class="fa fa-gift"></i></span><span>Kick In</span></a></li>
@@ -232,12 +221,11 @@ $(document).on('click','.cameras',function(){
 							<li><a href="#"><span><i  class="fa fa-heart"></i></span><span>Favorite</span></a></li>
 							<li><a href="javascript:void(0);" onclick="return Get_geo_location();" ><span><i  class="fa fa-map"></i></span><span>Location</span></a></li>
 							<li><a href="#"><span><i  class="fa fa-address-book"></i></span><span>Contact</span></a></li>   
-						</ul>
+						</ul> 
 						</div>
 					</div>
 				</div>
-				<!-- Modal -->
-					<div id="files_Modal" style="top:25%;" class="modal fade" role="dialog">
+				<div id="files_Modal" style="top:25%;" class="modal fade" role="dialog">
 					  <div class="modal-dialog">
 
 						<!-- Modal content-->
@@ -249,14 +237,14 @@ $(document).on('click','.cameras',function(){
 						  <form action="process.php" onsubmit="return file_submit();" method="post" enctype="multipart/form-data" id="upload_form">
 						  <div class="modal-body">
 							<div class="form-wrap">
-								<input name="file" type="file" />
+								<input name="file" onchange="$('#gallery_submit').click();" id="gallery_file" type="file" />
 								<input type="hidden" value="<?php echo $row['id']; ?>" required name="rid">
 								<!--div id="progress-wrp"><div class="progress-bar"></div ><div class="status">0%</div></div>
 								<div id="output" --><!-- error or success results ></div -->
 							</div>
 						  </div> 
 						  <div class="modal-footer">
-							<button type="submit" class="btn btn-success btn_prop">Send <i class="fa fa-spinner fa-spin fa-fw btn_load" style="display:none;"></i></button>
+							<button type="submit" id="gallery_submit" class="btn btn-success btn_prop">Send <i class="fa fa-spinner fa-spin fa-fw btn_load" style="display:none;"></i></button>
 							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 						  </div>
 						  </form>
@@ -272,31 +260,7 @@ $(document).on('click','.cameras',function(){
 		</div>
 	</div>
   </div>
-  
-<div id="cameraModal" style="top:20%" class="modal fade" role="dialog">
-  <div class="modal-dialog">
 
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Take From camera</h4>
-      </div>
-      <div class="modal-body">
-		<div id="results"></div>
-        <div id="my_camera"></div>
-		<form>
-			<button type="button"  onClick="take_snapshot()">Take Pic</button>
-		</form>
-      </div>
-      <div class="modal-footer">
-		<button type="button" class="btn btn-success" >Upload</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-
-  </div>
-</div>
  
   <ol id="recordingsList" style="top:450px; position:relative; display:none;"></ol>
   <?php
@@ -313,40 +277,47 @@ if(isset($_REQUEST['info']))
 function Get_geo_location()
 {
 	if(navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(showLocation);
+		navigator.geolocation.getCurrentPosition(showLocation, function(){},{maximumAge:0, timeout:10000});
+        //navigator.geolocation.getCurrentPosition(showLocation);
     }else{ 
         $('#location').html('Geolocation is not supported by this browser.');
 	}
 }
-function showLocation(position){
-    var latitude = position.coords.latitude;
-    var longitude = position.coords.longitude;
-    /*$.ajax({
-        type:'POST',
-        url:'getLocation.php',
-        data:'latitude='+latitude+'&longitude='+longitude,
-        success:function(msg){
-            if(msg){
-               $("#location").html(msg);
-            }else{
-                $("#location").html('Not Available');
-            }
-        }
-    }); */
-}
+
 </script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
-	<script src="lib/js/config.js"></script>
-    <script src="lib/js/util.js"></script>
-    <script src="lib/js/jquery.emojiarea.js"></script>
-    <script src="lib/js/emoji-picker.js"></script>
+    
+	<script src="https://eaglestarworld.com/lib/js/config.js"></script>
+    <script src="https://eaglestarworld.com/lib/js/util.js"></script>
+    <script src="https://eaglestarworld.com/lib/js/jquery.emojiarea.js"></script>
+    <script src="https://eaglestarworld.com/lib/js/emoji-picker.js"></script>
+	<script type="text/javascript" src="js/webcam.min.js"></script>
+	<script language="JavaScript">
+		Webcam.set({
+			width: 320,
+			height: 240,
+			image_format: 'jpeg',
+			jpeg_quality: 90
+		});
+	</script>
+	<!-- Code to handle taking the snapshot and displaying it locally -->
+	<script language="JavaScript">
+		function setup() {
+			Webcam.reset();
+			Webcam.attach( '#my_camera' );
+		}
+		
+		function take_snapshot() {
+			// take snapshot and get image data
+			Webcam.snap( function(data_uri) {
+				// display results in page
+				document.getElementById('results').innerHTML = 
+					'<h2>Here is your image:</h2>' + 
+					'<img src="'+data_uri+'"/>';
+			} );
+		}
+	</script>
     <!-- End emoji-picker JavaScript -->
 
-    <script>
-      $(function() {
-	 
-      });
-    </script>
-
+   
   </body>
